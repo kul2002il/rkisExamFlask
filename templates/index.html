@@ -1,10 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>index</title>
+	<title>
+		{% block title %}Главная{% endblock %} — Сайт
+	</title>
 	<meta charset="UTF-8">
+	<link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-	<h1>Hello</h1>
+	<header>
+		<nav>
+			<a href="/">Главная</a>
+			<a href="/">Услуги</a>
+			<a href="/">О нас</a>
+			<a href="/">Контакты</a>
+		</nav>
+	</header>
+	<main>
+		{% if messages %}
+			<article>
+				{% for message in messages %}
+					<p>{{message}}</p>
+				{% endfor %}
+			</article>
+		{% endif %}
+		{% block context %}
+			<h1>Hello</h1>
+		{% endblock %}
+	</main>
 </body>
 </html>

@@ -1,0 +1,23 @@
+{% extends 'index.html' %}
+
+{% block title %}Вход{% endblock %}
+
+{% block context %}
+	<h1>Вход</h1>
+	<form action="" method="post" enctype="multipart/form-data">
+		<table>
+			<tr>
+				<td><lable for="login">Логин</lable></td>
+				<td><input type="text" name="login" id="login"></td>
+			</tr>
+			<tr>
+				<td><lable for="password">Пароль</lable></td>
+				<td><input type="password" name="password" id="password"></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><button>Войти</button></td>
+			</tr>
+		</table>
+	</form>
+{% endblock %}
