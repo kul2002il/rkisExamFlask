@@ -1,11 +1,15 @@
-from flask import Flask, request, render_template, url_for, redirect, session, g, abort
+from flask import Flask, request, render_template, url_for, redirect, session, g, send_from_directory
 import os
+import datetime
+from PIL import Image, UnidentifiedImageError
+
 from module_init import init_db, connect_db
 
 
 DATABASE = 'db.sqlite3'
+UPLOAD_FOLDER = 'files'
 DEBUG = True
-SECRET_KEY = os.urandom(24)
+SECRET_KEY = 'Секрет, который никто не должен знать.'# os.urandom(24)
 USERNAME = 'admin'
 PASSWORD = 'admin'
 
@@ -67,7 +71,7 @@ def login():
 			else:
 				messages = 'Неверный логин или пароль.',
 		elif request.form['target'] == 'logout':
-			if session['user']:
+			if session.get('user'):
 				session.pop('user', None)
 				messages = 'Успешный выход.',
 			else:
@@ -79,11 +83,36 @@ def login():
 def add_service():
 	messages = []
 	if request.method == 'POST':
-		if session.user:
-			pass
+		if session.get('user'):
+			name_file = 'IMG' + str(datetime.datetime.now())
+			file = request.files['image']
+			try:
+				image = Image.open(file)
+				name_file += '.' + image.format.lower()
+				image.thumbnail((500, 500))
+				image.save('files/image/' + name_file)
+				image.show()
+			except UnidentifiedImageError:
+				messages = 'Неизвестный тип файла. Принимаются только изображения.',
+				return render_template('add_service.html', messages=messages)
+			g.db.execute('''
+			INSERT INTO service (title, description, image)
+			VALUES (?, ?, ?)
+			''', [
+				request.form['title'],
+				request.form['description'],
+				name_file,
+			])
+			g.db.commit()
+			messages = 'Успешно отправлено.',
 		else:
-			messages = 'Неверный вход',
+			messages = 'Вы не авторизованы.',
 	return render_template('add_service.html', messages=messages)
+
+
+@app.route('/files/<path:filename>')
+def upload_file(filename):
+	return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
 if __name__ == '__main__':
