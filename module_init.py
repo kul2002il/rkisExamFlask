@@ -7,7 +7,7 @@ def connect_db(app):
 
 def init_db(app):
 	script = '''
-CREATE TABLE IF NOT EXISTS servise (
+CREATE TABLE IF NOT EXISTS service (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	title STRING NOT NULL,
 	description STRING NOT NULL,

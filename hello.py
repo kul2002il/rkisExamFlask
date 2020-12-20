@@ -20,7 +20,7 @@ def before_request():
 
 
 @app.teardown_request
-def teardown_request():
+def teardown_request(*args, **kwargs):
 	g.db.close()
 
 
@@ -31,8 +31,18 @@ def index():
 
 @app.route('/service/')
 def service():
-	g.db.execute()
-	return render_template('service.html')
+	data_list = g.db.execute("SELECT * FROM service").fetchall()
+	services =\
+		[
+			{
+				'title': data[1],
+				'description': data[2],
+				'datatime': data[3],
+				'image': data[4]
+			}
+			for data in data_list
+		]
+	return render_template('service.html', services=services)
 
 
 @app.route('/about/')

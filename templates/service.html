@@ -4,5 +4,13 @@
 
 {% block context %}
 	<h1>Услуги</h1>
-	<p>Это информация.</p>
+	{% for service in services %}
+		<div>
+			<h2>{{service.title}}</h2>
+			<p>{{service.description}}</p>
+			{% if service.image %}
+			<img src="{{service.image}}" alt="{{service.image}}">
+			{% endif %}
+		</div>
+	{% endfor %}
 {% endblock %}
