@@ -1,17 +1,37 @@
-from flask import Flask, request, render_template, url_for, redirect
+from flask import Flask, request, render_template, url_for, redirect, session, g
+import os
+from module_init import init_db, connect_db
+
+
+DATABASE = 'db.sqlite3'
+DEBUG = True
+SECRET_KEY = os.urandom(24)
+USERNAME = 'admin'
+PASSWORD = 'admin'
 
 app = Flask(__name__)
+app.config.from_object(__name__)
+init_db(app)
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.before_request
+def before_request():
+	g.db = connect_db(app)
+
+
+@app.teardown_request
+def teardown_request():
+	g.db.close()
+
+
+@app.route('/')
 def index():
-	if request.method == 'POST':
-		return 'hello, post'
 	return render_template('index.html')
 
 
 @app.route('/service/')
 def service():
+	g.db.execute()
 	return render_template('service.html')
 
 
@@ -40,4 +60,4 @@ def add_service():
 
 
 if __name__ == '__main__':
-	app.run(debug=True)
+	app.run()
