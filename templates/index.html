@@ -14,6 +14,9 @@
 			<a href="/">Услуги</a>
 			<a href="/">О нас</a>
 			<a href="/">Контакты</a>
+			{% if session.user %}
+			{{ session.user }}
+			{% endif %}
 		</nav>
 	</header>
 	<main>

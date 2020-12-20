@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, url_for, redirect, session, g
+from flask import Flask, request, render_template, url_for, redirect, session, g, abort
 import os
 from module_init import init_db, connect_db
 
@@ -57,16 +57,33 @@ def contacts():
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
+	messages = []
 	if request.method == 'POST':
-		return redirect(url_for('add_service'))
-	return render_template('login.html')
+		if request.form['target'] == 'login':
+			if app.config['USERNAME'] == request.form['login'] and\
+				app.config['PASSWORD'] == request.form['password']:
+				session['user'] = 'admin'
+				messages = 'Успешный вход.',
+			else:
+				messages = 'Неверный логин или пароль.',
+		elif request.form['target'] == 'logout':
+			if session['user']:
+				session.pop('user', None)
+				messages = 'Успешный выход.',
+			else:
+				messages = 'Нет авторизованных пользователей.',
+	return render_template('login.html', messages=messages)
 
 
 @app.route('/add_service/', methods=['GET', 'POST'])
 def add_service():
+	messages = []
 	if request.method == 'POST':
-		pass
-	return render_template('add_service.html')
+		if session.user:
+			pass
+		else:
+			messages = 'Неверный вход',
+	return render_template('add_service.html', messages=messages)
 
 
 if __name__ == '__main__':

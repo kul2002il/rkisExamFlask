@@ -4,7 +4,12 @@
 
 {% block context %}
 	<h1>Вход</h1>
-	<form action="" method="post" enctype="multipart/form-data">
+	<form action="" method="post">
+		{% if session.user %}
+		<input type="hidden" name="target" value="logout">
+		<button>Выйти</button>
+		{% else %}
+		<input type="hidden" name="target" value="login">
 		<table>
 			<tr>
 				<td><lable for="login">Логин</lable></td>
@@ -19,5 +24,6 @@
 				<td><button>Войти</button></td>
 			</tr>
 		</table>
+		{% endif %}
 	</form>
 {% endblock %}
